@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 
-const Pregunta = () => {
-   // Definir el state
+import Error from './Error';
+
+const Pregunta = ({ setPresupuesto, setRestante, setMostrarPregunta }) => {
+	// Definir el state
 	const [cantidad, setCantidad] = useState(0);
 
 	const [error, setError] = useState(false);
 
-   // Función que lee el presupuesto
+	// Función que lee el presupuesto
 	const handleChange = e => {
 		setCantidad(parseInt(e.target.value, 10));
 	};
@@ -15,15 +18,21 @@ const Pregunta = () => {
 		e.preventDefault();
 
 		// Validar
-		if (cantidad < 1) {
+		if (cantidad < 1 || isNaN(cantidad)) {
 			setError(true);
-      }
-      
-      // Si se pasa la validación
+			return;
+		}
+
+		// Si se pasa la validación
+		setError(false);
+		setPresupuesto(cantidad);
+		setRestante(cantidad);
+		setMostrarPregunta(false);
 	};
 	return (
 		<>
 			<h2>Coloca tu presupuesto</h2>
+			{error ? <Error msg='El presupuesto es incorrecto' /> : null}
 			<form onSubmit={onSubmit}>
 				<input
 					type='number'
@@ -39,6 +48,12 @@ const Pregunta = () => {
 			</form>
 		</>
 	);
+};
+
+Pregunta.propTypes = {
+	setPresupuesto: PropTypes.func.isRequired,
+	setRestante: PropTypes.func.isRequired,
+	setMostrarPregunta: PropTypes.func.isRequired,
 };
 
 export default Pregunta;
